@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA</title>
+</head>
+<body>
+    <h1>Clasificador de flores</h1>
+    <form id="upload-form" action="/predict" method="post" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*" required>
+        <br><br>
+        <button type="submit">Enviar imagen</button>
+    </form>
+    <br>
+    <div id="result" style="display:none;">
+        <h2>Resultado:</h2>
+        <p id="class-result"></p>
+        <img id="uploaded-image" src="#" alt="Imagen cargada" style="max-width: 300px; display:none;">
+    </div>
+
+    <script>
+        // Función para mostrar el resultado de la clasificación
+        function showResult(result) {
+            document.getElementById("class-result").innerText = "Clase: " + result.class;
+            document.getElementById("result").style.display = "block";
+            document.getElementById("uploaded-image").style.display = "block";
+            document.getElementById("uploaded-image").src = URL.createObjectURL(document.querySelector('input[type=file]').files[0]);
+        }
+        
+        // Manejar la respuesta del servidor
+        document.getElementById("upload-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            var form = event.target;
+            var formData = new FormData(form);
+            
+            fetch(form.action, {
+                method: form.method,
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log(result);
+                showResult(result);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
